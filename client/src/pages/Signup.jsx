@@ -1,11 +1,12 @@
 import React from 'react'
 import { useState } from 'react'
 import OAuth from '../components/OAuth'
-import { Link } from 'react-router-dom'
+import { Link ,useNavigate} from 'react-router-dom'
 const Signup = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [formData,setFormData] = useState({})
+	const [formData, setFormData] = useState({})
+	const navigate = useNavigate()
   const handleSubmit = async (e) =>{
     e.preventDefault();
     try {
@@ -23,12 +24,13 @@ const Signup = () => {
   // console.log(data);
       if (data.success === false) {
       setError(true)
-    }
+		}
+		
    } catch (error) {
       setLoading(false)
       setError(true)
    }
-    
+    navigate('/sign-in')
   }
   
   const handleChange = (e) => {
