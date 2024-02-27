@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
 import { app } from "../firebase";
-import { deleteUserFailure, deleteUserStart, deleteUserSuccess, updateUserFailure, updateUserStart, updateUserSuccess } from '../redux/user/userSlice'
+import { deleteUserFailure, deleteUserStart, deleteUserSuccess, updateUserFailure, updateUserStart, updateUserSuccess,signout } from '../redux/user/userSlice'
 import { useDispatch } from "react-redux";
 
 const Profile = () => {
@@ -92,6 +92,16 @@ const Profile = () => {
 			dispatch(deleteUserFailure(error))
 		}
 	}
+
+	const handleSignout = async () => {
+		try {
+			await fetch('api/auth/signout')
+			dispatch(signout())
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
   return (
 		<div className="w-110 flex flex-col items-center ">
 			<h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -170,7 +180,7 @@ const Profile = () => {
 				>
 					Delete Account
 				</span>
-				<span className="text-red-700 cursor-pointer">Sign Out</span>
+				<span className="text-red-700 cursor-pointer" onClick={handleSignout}>Sign Out</span>
 			</div>
 		</div>
 	);
