@@ -4,14 +4,15 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
 import { app } from "../firebase";
-import { updateUserFailure, updateUserStart, updateUserSuccess } from '../redux/user/userSlice'
+import { deleteUserFailure, deleteUserStart, deleteUserSuccess, updateUserFailure, updateUserStart, updateUserSuccess } from '../redux/user/userSlice'
 import { useDispatch } from "react-redux";
 
 const Profile = () => {
   const [image, setImage] = useState(undefined)
   const [imagePercent,setImagePercent] = useState(0)
   const [imageError, setImageError] = useState(null)
-  const [formData,setFormData] = useState({})
+	const [formData, setFormData] = useState({})
+	const [updateSuccess, setUpdateSuccess] = useState(null)
 	const fileRef = useRef(null)
 	const dispatch = useDispatch()
   const { currentUser,loading,error } = useSelector(state => state.user)
@@ -63,13 +64,34 @@ const Profile = () => {
 			const data = await res.json()
 			if (data.success === false) {
 				dispatch(updateUserFailure(data))
+				setUpdateSuccess(false)
 			}
 			dispatch(updateUserSuccess(data))
+			setUpdateSuccess(true)
 			// console.log(data);
 		} catch (error) {
 			dispatch(updateUserFailure(error))
+				setUpdateSuccess(false);
+
 		}
-}
+	}
+	
+	const handleDeleteAccount = async () => {
+		try {
+			deleteUserStart
+			const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+				method:"DELETE"
+			})
+			const data = await res.json()
+			if (data.success === false) {
+				dispatch(deleteUserFailure(data))
+			}
+
+			dispatch(deleteUserSuccess())
+		} catch (error) {
+			dispatch(deleteUserFailure(error))
+		}
+	}
   return (
 		<div className="w-110 flex flex-col items-center ">
 			<h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -129,13 +151,25 @@ const Profile = () => {
 					onChange={handleChange}
 				/>
 
-				<button disabled={loading} className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
+				<button
+					disabled={loading}
+					className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+				>
 					{loading ? 'Loading...' : 'Update'}
 				</button>
+				<p className="text-green-500 self-center">
+					{updateSuccess && 'Updated Successfully'}
+				</p>
+				
 			</form>
 
 			<div className="flex justify-between mt-5 gap-7">
-				<span className="text-red-700 cursor-pointer ">Delete Account</span>
+				<span
+					className="text-red-700 cursor-pointer "
+					onClick={handleDeleteAccount}
+				>
+					Delete Account
+				</span>
 				<span className="text-red-700 cursor-pointer">Sign Out</span>
 			</div>
 		</div>
