@@ -11,13 +11,13 @@ dotenv.config();
 mongoose.connect(process.env.MONGODB_URL).then(() => {
     console.log("Successfully connected to  MongoDB.");
 })
-    .catch((err) => console.error("Error in connecting the MongoDB")); \
+    .catch((err) => console.error("Error in connecting the MongoDB")); 
 
     const __dirname = path.resolve()
 
 const app = express()
 
-app.use(express.static(path.join(__dirname, '/client/dist')))
+app.use(express.static(path.join(__dirname, '/client/dist')));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
